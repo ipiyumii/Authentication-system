@@ -1,25 +1,3 @@
-document.addEventListener('DOMContentLoaded', function () {
-    var errorMessage = document.getElementById('username-error');
-    if (errorMessage.innerText === '') {
-        errorMessage.style.display = 'none';
-    } else {
-        errorMessage.style.display = 'block';
-    }
-
-    const wrapper = document.querySelector('.wrapper');
-    const loginlink = document.querySelector('.login-link');
-    const registerlink = document.querySelector('.register-link');
-
-    registerlink.addEventListener('click', (event) => {
-        event.preventDefault();
-        wrapper.classList.add('active');
-    });
-
-    loginlink.addEventListener('click', (event) => {
-        event.preventDefault();
-        wrapper.classList.remove('active');
-    });
-});
 
 function validatePasswords() {
     var password = document.getElementById('password').value;
@@ -50,3 +28,10 @@ function validateEmail() {
             return true; // Allow form submission
         }
     }
+    function editProfile() {
+        var inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(function(input) {
+            input.disabled = false;
+        });
+    }
+    
