@@ -15,6 +15,8 @@ function getSession($key) {
 }
 
 function endSession() {
+    $_SESSION = [];
+
     // Destroy the session
     session_destroy();
 }
