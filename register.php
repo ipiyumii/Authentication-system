@@ -1,52 +1,97 @@
 <?php
-    ini_set('display_errors', 1);
-    error_reporting(E_ALL);    
+//    ini_set('display_errors', 1);
+//    error_reporting(E_ALL);
    
-    $usernameError = '';
-    $emailError='';
-    $passwordError= '';
-    $confirmPasswordError= '';
-    $addressError= '';
+//    $usernameError = '';
+//    $emailError='';
+//    $passwordError= '';
+//    $confirmPasswordError= '';
+//    $addressError= '';
 
     require_once('auth.php');
     require_once('session.php');
     require_once('dbUtil.php');
     require_once('validateInputs.php');
+    require __DIR__ . '/vendor/autoload.php';
 
-    if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnregister'])) {
-        $username = htmlspecialchars($_POST['username']);
-        $email = htmlspecialchars($_POST['email']);
-        $telephone = htmlspecialchars($_POST['telephone']);
-        $address = htmlspecialchars($_POST['address']);
-        $password = htmlspecialchars($_POST['password']);
-        $confirmPassword=htmlspecialchars($_POST['confirmPassword']);
+    use Auth0\SDK\Auth0;
 
-        $errors = validateRegistrationInput($username, $email, $password, $confirmPassword, $telephone, $address);
+// Initialize necessary components
+    $mailer = new PHPMailer\PHPMailer\PHPMailer();
 
-        if(empty($errors)){
-            $hashedPassword = hashPassword($password);
-            $userId = saveUserToDatabase($username, $hashedPassword, $email, $address,$telephone);
+if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnregister'])) {
+    $username = htmlspecialchars($_POST['username']);
+    $email = htmlspecialchars($_POST['email']);
+    $telephone = htmlspecialchars($_POST['telephone']);
+    $address = htmlspecialchars($_POST['address']);
+    $password = htmlspecialchars($_POST['password']);
+    $confirmPassword=htmlspecialchars($_POST['confirmPassword']);
 
-            if ($userId) {
-                // Registration successful, set session variables and redirect to the dashboard
-                setSession('user_id', $userId);
-                setSession('username', $username);
-                
-                // Redirect to the dashboard page
-                header('Location: dashboard.php');
-                exit();
-            } else {
-                // Registration failed, handle the error (e.g., display an error message)
-                $error = "Registration failed. Please try again.";
-            }
+    $errors = validateRegistrationInput($username, $email, $password, $confirmPassword, $telephone, $address);
+    if(empty($errors)){
+        // Generate MFA token
+        $mfaToken = generateMfaToken();
+
+        // Send verification email
+        $recipientEmail = $_POST['email'];
+        $verificationLink = "http://localhost/auth_system/verify_mfa.php?token=$mfaToken";
+        $subject = "Verify Your Email for MFA Setup";
+        $body = "To set up Multi-Factor Authentication (MFA) for your account, please click the following link to verify your email address: $verificationLink";
+
+        $mailer->setFrom('your@example.com', 'Your Name');
+        $mailer->addAddress($recipientEmail);
+        $mailer->Subject = $subject;
+        $mailer->Body = $body;
+
+        if ($mailer->send()) {
+            // Store MFA token in session for verification
+            $_SESSION['mfa_token'] = $mfaToken;
+
+            // Redirect user to MFA verification page
+            header('Location: verify_mfa.php');
+            exit();
         } else {
-            $usernameError = $errors['username'] ?? '';
-            $emailError = $errors['email'] ?? '';
-            $passwordError = $errors['password'] ?? '';
-            $confirmPasswordError = $errors['confirmPassword'] ?? '';
-            $addressError = $errors['address'] ?? '';        
-        }          
-    }   
+            echo 'Error: Email could not be sent.';
+
+        }
+    }
+}
+
+
+//if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnregister'])) {
+//        $username = htmlspecialchars($_POST['username']);
+//        $email = htmlspecialchars($_POST['email']);
+//        $telephone = htmlspecialchars($_POST['telephone']);
+//        $address = htmlspecialchars($_POST['address']);
+//        $password = htmlspecialchars($_POST['password']);
+//        $confirmPassword=htmlspecialchars($_POST['confirmPassword']);
+//
+//        $errors = validateRegistrationInput($username, $email, $password, $confirmPassword, $telephone, $address);
+//
+//        if(empty($errors)){
+//            $hashedPassword = hashPassword($password);
+//            $userId = saveUserToDatabase($username, $hashedPassword, $email, $address,$telephone);
+//
+//            if ($userId) {
+//                // Registration successful, set session variables and redirect to the dashboard
+//                setSession('user_id', $userId);
+//                setSession('username', $username);
+//
+//                // Redirect to the dashboard page
+//                header('Location: dashboard.php');
+//                exit();
+//            } else {
+//                // Registration failed, handle the error (e.g., display an error message)
+//                $error = "Registration failed. Please try again.";
+//            }
+//        } else {
+//            $usernameError = $errors['username'] ?? '';
+//            $emailError = $errors['email'] ?? '';
+//            $passwordError = $errors['password'] ?? '';
+//            $confirmPasswordError = $errors['confirmPassword'] ?? '';
+//            $addressError = $errors['address'] ?? '';
+//        }
+//    }
 ?>
 
 <html lang="en">

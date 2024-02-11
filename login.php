@@ -5,7 +5,7 @@
    require_once('auth.php');
    require_once('session.php');
    require_once('dbUtil.php');
-   require_once('auth0.php');
+//   require_once('auth0.php');
 
 // Handle login logic
 
@@ -58,7 +58,10 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' &
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
     <link rel="stylesheet" href="assests/loginstyle.css">
-  
+
+    <script src="node_modules/@auth0/auth0-spa-js/dist/auth0-spa-js.production.js"></script>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js@latest.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" 
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </head>
@@ -102,7 +105,10 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' &
                     </div>
                     <br>
                     <div class="btn-sso">
-                        <a href="google_oauth_client.php">Login with Google</a> 
+                        <a href="https://accounts.google.com/o/oauth2/v2/auth?client_id=601545463122-q61e84etavrj2stgh6erhfq2mvl2gf48.apps.googleusercontent.com&redirect_uri=http://localhost/auth_system/callback.php&response_type=code&scope=email%20profile&access_type=offline">Sign in with Google</a>
+
+                        <!--                        <button id="login-button" type="button">Login with Google</button>-->
+
                     </div>
                    
 

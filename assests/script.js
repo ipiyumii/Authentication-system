@@ -34,4 +34,28 @@ function validateEmail() {
             input.disabled = false;
         });
     }
+
+const auth0 = new auth0.WebAuth({
+    domain: 'dev-n204rpwbcj2fvi0r.us.auth0.com',
+    client_id: 'osq0GxGTH0MYvARNWurH6eMeHy3S8AS6',
+    redirect_uri: ' http://localhost/auth_system/dashboard.php',
+    cacheLocation: 'localstorage'
+});
+
+function callback(err, result) {
+    if (err) {
+        console.error(err);
+        // Handle error gracefully
+    } else {
+        const token = result.accessToken;
+        // Send or store access token for server-side validation
+        localStorage.setItem('auth0_token', token);
+        window.location.href = '/protected-area'; // Redirect to protected area
+    }
+}
+
+
+
+
+
     
