@@ -8,8 +8,8 @@
         "league/flysystem": "^3.24",
         "laravel/sanctum": "^3.3",
         "kreait/firebase-php": "^7.9",
-        "google/api-client": "^0.6.2",
-        "guzzlehttp/guzzle": "*"
+        "guzzlehttp/guzzle": "*",
+        "phpmailer/phpmailer": "^6.9"
     },
     "license": "MIT",
     "autoload": {
