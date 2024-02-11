@@ -1,13 +1,113 @@
 <?php
-session_start();
-require_once __DIR__ . '/auth0.php';
 
-$userInfo = $auth0->getUser();
+// Include the Google API client library
+require_once 'vendor/autoload.php';
+require_once('session.php');
+require_once('dbUtil.php');
+require_once ('validateInputs.php');
 
-if ($userInfo) {
-    $_SESSION['user'] = $userInfo;
-    header('Location: dashboard.php');
-    exit;
+// Initialize the Google client
+$client = new Google_Client();
+$client->setAuthConfig(__DIR__ .'/client_secret_601545463122-q61e84etavrj2stgh6erhfq2mvl2gf48.apps.googleusercontent.com.json'); // Path to your client secret JSON file
+$client->setRedirectUri('http://localhost/auth_system/callback.php'); // Your callback URL
+$client->addScope('email');
+$client->addScope('profile');
+
+
+// Handle the OAuth callback
+//if (isset($_GET['code'])) {
+//    try {
+//        // Exchange authorization code for access token
+//        $accessToken = $client->fetchAccessTokenWithAuthCode($_GET['code']);
+//        // Set access token to the client
+//        $client->setAccessToken($accessToken);
+//
+//        // Get user info
+//        $oauth2 = new Google_Service_Oauth2($client);
+//        $userInfo = $oauth2->userinfo->get();
+//
+//        if($userInfo){
+//            // Extract user information into separate variables
+//            $userId = $userInfo->getId();
+//            $firstName = $userInfo->getGivenName();
+//            $lastName = $userInfo->getFamilyName();
+//            $email = $userInfo->getEmail();
+//
+//            $user = getUserByGoogleId($email);
+//
+//            if($user){
+//                setSession('user_id', $user['user_id']);
+//                setSession('username', $user['username']);
+//
+//                setSession('login_attempts', 0);
+//                setSession('last_login_attempt', 0);
+//
+//                header('Location: dashboard.php');
+//                exit();
+//            } else{
+//                $username = generateUsername($firstName);
+//                $saved = saveGoogleUserToDatabase($username, $email, $userId);
+//
+//                if($saved){
+//                    setSession('user_id', $userId);
+//                    setSession('username', $username);
+//
+//                    setSession('login_attempts', 0);
+//                    setSession('last_login_attempt', 0);
+//
+//                    header('Location: dashboard.php');
+//                    exit();
+//                } else{
+//                    echo "User could not be created.";
+//                }
+//            }
+//        }else{
+//            echo "Failed to retrieve user information.";
+//            exit();
+//        }
+//        // You can redirect the user or perform further actions here
+//    } catch (Google_Service_Exception $e) {
+//        error_log('Google Service Error: ' . $e->getMessage());
+//        echo 'An error occurred while processing your request. Please try again later.';
+//    } catch (Google_Exception $e) {
+//        error_log('Google Error: ' . $e->getMessage());
+//        echo 'An error occurred while processing your request. Please try again later.';
+//    } catch (Exception $e) {
+//         error_log('Error: ' . $e->getMessage());
+//        echo 'An error occurred while processing your request. Please try again later.';
+//    }
+//} else {
+//    echo "Authorization code not found.";
+//    exit();
+//}
+
+if (isset($_GET['code'])) {
+    try {
+        // Exchange authorization code for access token
+        $accessToken = $client->fetchAccessTokenWithAuthCode($_GET['code']);
+
+        // Set access token to the client
+        $client->setAccessToken($accessToken);
+
+        // Get user info
+        $oauth2 = new Google_Service_Oauth2($client);
+        $userInfo = $oauth2->userinfo->get();
+
+        // Display user information
+        echo "<pre>";
+        print_r($userInfo);
+        echo "</pre>";
+        // You can redirect the user or perform further actions here
+    } catch (Google_Service_Exception $e) {
+        echo 'Google Service Error: ' . $e->getMessage();
+    } catch (Google_Exception $e) {
+        echo 'Google Error: ' . $e->getMessage();
+    } catch (Exception $e) {
+        echo 'Error: ' . $e->getMessage();
+    }
 } else {
-    echo 'Authentication failed';
+    echo 'Authorization code not found.';
 }
+?>
+
+

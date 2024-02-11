@@ -1,8 +1,29 @@
 {
+    "name": "piyumiimalka/auth_system",
+    "description": "A PHP authentication system for web applications",
+    "type": "project",
     "require": {
-        "google/apiclient": "^2.0",
-        "auth0/auth0-php": "^8.11"
+        "league/oauth2-server": "*",
+        "guzzlehttp/guzzle-services": "^1.4",
+        "league/flysystem": "^3.24",
+        "laravel/sanctum": "^3.3",
+        "kreait/firebase-php": "^7.9",
+        "google/api-client": "^0.6.2",
+        "guzzlehttp/guzzle": "*"
     },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Piyumiimalka\\AuthSystem\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Piyumi",
+            "email": "sendtopiyumi@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
     "config": {
         "allow-plugins": {
             "php-http/discovery": true
