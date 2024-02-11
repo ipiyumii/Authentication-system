@@ -1,25 +1,27 @@
 <?php
-//    ini_set('display_errors', 1);
-//    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL);
    
-//    $usernameError = '';
-//    $emailError='';
-//    $passwordError= '';
-//    $confirmPasswordError= '';
-//    $addressError= '';
+    $usernameError = '';
+    $emailError='';
+    $passwordError= '';
+    $confirmPasswordError= '';
+    $addressError= '';
 
     require_once('auth.php');
     require_once('session.php');
     require_once('dbUtil.php');
     require_once('validateInputs.php');
     require __DIR__ . '/vendor/autoload.php';
-
+//
     use Auth0\SDK\Auth0;
+    use PHPMailer\PHPMailer\PHPMailer;
+
 
 // Initialize necessary components
-    $mailer = new PHPMailer\PHPMailer\PHPMailer();
+    $mailer = new PHPMailer();
 
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnregister'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnregister'])) {
     $username = htmlspecialchars($_POST['username']);
     $email = htmlspecialchars($_POST['email']);
     $telephone = htmlspecialchars($_POST['telephone']);
@@ -28,17 +30,39 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' &
     $confirmPassword=htmlspecialchars($_POST['confirmPassword']);
 
     $errors = validateRegistrationInput($username, $email, $password, $confirmPassword, $telephone, $address);
+
+    function generateMfaToken() {
+        // Generate a unique identifier
+        $uniqueId = uniqid();
+
+        // Generate a random string for additional security
+        $randomString = bin2hex(random_bytes(16));
+
+        // Concatenate the unique ID and random string to form the MFA token
+        $mfaToken = $uniqueId . $randomString;
+
+        // Return the MFA token
+        return $mfaToken;
+    }
     if(empty($errors)){
+        // Store validated user inputs in the session
+        $_SESSION['registration_data'] = [
+            'username' => $username,
+            'email' => $email,
+            'telephone' => $telephone,
+            'address' => $address,
+            'password' => $password
+        ];
         // Generate MFA token
         $mfaToken = generateMfaToken();
 
         // Send verification email
-        $recipientEmail = $_POST['email'];
-        $verificationLink = "http://localhost/auth_system/verify_mfa.php?token=$mfaToken";
+        $recipientEmail = $email;
+        $verificationLink = "http://localhost/auth_system/verify_mfa.php?token=$mfaToken&username=$username&email=$email&telephone=$telephone&address=$address&password=$password";
         $subject = "Verify Your Email for MFA Setup";
         $body = "To set up Multi-Factor Authentication (MFA) for your account, please click the following link to verify your email address: $verificationLink";
 
-        $mailer->setFrom('your@example.com', 'Your Name');
+        $mailer->setFrom('sendtopiyumi@gmail.com', 'Piyumi');
         $mailer->addAddress($recipientEmail);
         $mailer->Subject = $subject;
         $mailer->Body = $body;
@@ -56,6 +80,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' &
         }
     }
 }
+
 
 
 //if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnregister'])) {

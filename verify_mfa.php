@@ -4,6 +4,7 @@ require_once('vendor/autoload.php');
 require_once('session.php');
 require_once('dbUtil.php');
 require_once('validateInputs.php');
+require_once ('register.php');
 
 // Initialize necessary components
 $mailer = new PHPMailer\PHPMailer\PHPMailer();
@@ -18,11 +19,22 @@ if (isset($_GET['token'])) {
         // MFA token is valid, proceed with user registration
 
         // Retrieve user data from session (if needed)
-        $username = $_SESSION['registration_data']['username'];
-        $email = $_SESSION['registration_data']['email'];
-        $telephone = $_SESSION['registration_data']['telephone'];
-        $address = $_SESSION['registration_data']['address'];
-        $password = $_SESSION['registration_data']['password'];
+        if (isset($_SESSION['registration_data'])) {
+            $userData = $_SESSION['registration_data'];
+            $username = $userData['username'];
+            $email = $userData['email'];
+            $telephone = $userData['telephone'];
+            $address = $userData['address'];
+            $password = $userData['password'];
+        } else{
+            echo 'Error: User data not found in the session.';
+        }
+
+//        $username = $_GET['username'];
+//        $email = $_GET['email'];
+//        $telephone = $_GET['telephone'];
+//        $address = $_GET['address'];
+//        $password = $_GET['password'];
 
         // Insert user into the database
         $hashedPassword = hashPassword($password);
@@ -39,13 +51,18 @@ if (isset($_GET['token'])) {
         } else {
             // Registration failed, handle accordingly
             echo 'Error: User registration failed. Please try again.';
+            exit();
         }
     } else {
         // Invalid or expired MFA token
         echo 'Error: Invalid or expired verification token.';
+        exit();
     }
 } else {
     // MFA token not found in the query parameters
     echo 'Error: MFA token not found.';
+    exit();
 }
 ?>
+
+
