@@ -15,9 +15,11 @@ function getSession($key) {
 }
 
 function endSession() {
-    $_SESSION = [];
+    $userId = $_SESSION['user_id'];
 
+    // $rest= resetLoginAttempts($userId);
     // Destroy the session
+    $_SESSION = [];
     session_destroy();
 }
 

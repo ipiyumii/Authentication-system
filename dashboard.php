@@ -60,6 +60,7 @@
                         <span class="las la-bell"></span>
                         <span class="notify">3</span>
                     </div>
+
                     <a href="logout.php">
                     <div class="user">
                         <div class="bg-img" style="background-image: url(img/1.jpeg)"></div>

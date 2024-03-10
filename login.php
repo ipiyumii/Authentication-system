@@ -7,43 +7,78 @@
    require_once('dbUtil.php');
 //   require_once('auth0.php');
 
-// Handle login logic
 
 if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnsubmit'])) {
-        $username = htmlspecialchars($_POST['username']);
-        $password = htmlspecialchars($_POST['password']);
+    $username = htmlspecialchars($_POST['username']);
+    $password = htmlspecialchars($_POST['password']);
 
-        if (empty($password)) {
-            $error = "Password is required.";
-         } else {
-            $user = getUserFromDatabase($username);
-        
-            // Set session variables or redirect the user to the dashboard upon successful login
-            if ($user && verifyPassword($password, $user['password'])) {
-                // Set session variables
-                setSession('user_id', $user['id']);
-                setSession('username', $user['username']);
-            
-                // Reset login attempts on successful login
-                setSession('login_attempts', 0);
-                setSession('last_login_attempt', 0);
-            
-                // Redirect to the dashboard page
-                header('Location: dashboard.php');
-                exit();
-            } else {
+    clearLoginAttempts($username);
+
+    if (empty($password)) {
+        $error = "Password is required.";
+    } else {
+        $user = getUserFromDatabase($username);
+
+        // Set session variables or redirect the user to the dashboard upon successful login
+        if ($user && verifyPassword($password, $user['password'])) {
+            // Set session variables
+            setSession('user_id', $user['id']);
+            setSession('username', $user['username']);
+
+            // Reset login attempts on successful login
+            setSession('login_attempts', 0);
+            setSession('last_login_attempt', 0);
+
+            resetLoginAttempts($username);
+            // Redirect to the dashboard page
+            header('Location: dashboard.php');
+            exit();
+        } else {
             // Increment login attempts for account lockout mechanism
             incrementLoginAttempts($username);
-                  // Check if the account should be locked
-                  $isAccountLocked = isAccountLocked($username);
-                  if ($isAccountLocked) {
-                      $error = "Your account has been locked due to multiple failed login attempts. Please contact support.";
-                  } else {
-                      $error = "Invalid username or password.";
-                  }
-           }
-        }      
-    } 
+            // Check if the account should be locked
+            $isAccountLocked = isAccountLocked($username);
+            if ($isAccountLocked) {
+                $error = "Your account has been locked due to multiple failed login attempts. Please contact support.";
+            } else {
+                $error = "Invalid username or password.";
+            }
+        }
+    }
+
+
+
+//    if (empty($password)) {
+//            $error = "Password is required.";
+//         } else {
+//            $user = getUserFromDatabase($username);
+//
+//            // Set session variables or redirect the user to the dashboard upon successful login
+//            if ($user && verifyPassword($password, $user['password'])) {
+//                // Set session variables
+//                setSession('user_id', $user['id']);
+//                setSession('username', $user['username']);
+//
+//                // Reset login attempts on successful login
+//                setSession('login_attempts', 0);
+//                setSession('last_login_attempt', 0);
+//
+//                // Redirect to the dashboard page
+//                header('Location: dashboard.php');
+//                exit();
+//            } else {
+//            // Increment login attempts for account lockout mechanism
+//            incrementLoginAttempts($username);
+//                  // Check if the account should be locked
+//                  $isAccountLocked = isAccountLocked($username);
+//                  if ($isAccountLocked) {
+//                      $error = "Your account has been locked due to multiple failed login attempts. Please contact support.";
+//                  } else {
+//                      $error = "Invalid username or password.";
+//                  }
+//           }
+//        }
+    }
 
 
 ?>
@@ -83,7 +118,6 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' &
                         <label>password</label>
                     </div>
                     <div class="remember-forgot">
-                        <label><input type="checkbox"> Remember me</label>
                         <a href="#">Forgot password?</a>
                     </div>
                     <button type="submit" class="btnsubmit" id="btnsubmit" name ="btnsubmit">Login</button>
@@ -100,10 +134,6 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' &
                         ?>
                     </div>
 
-                    <div class="btn-auth0">
-                        <a href="auth0.php">Login with Multi Factor Authentication</a>
-                    </div>
-                    <br>
                     <div class="btn-sso">
                         <a href="https://accounts.google.com/o/oauth2/v2/auth?client_id=601545463122-q61e84etavrj2stgh6erhfq2mvl2gf48.apps.googleusercontent.com&redirect_uri=http://localhost/auth_system/callback.php&response_type=code&scope=email%20profile&access_type=offline">Sign in with Google</a>
 

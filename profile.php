@@ -1,18 +1,86 @@
 <?php
-    // Include necessary files
-    require_once('session.php');
-    require_once('dbUtil.php');
-    require_once('auth.php');
-    // Check if the user is logged in
-    if (!getSession('user_id')) {
-        // Redirect to the login page if not logged in
-        header('Location: login.php');
-        exit();
-    }
- 
+//    // Include necessary files
+//    require_once('session.php');
+//    require_once('dbUtil.php');
+//    require_once('auth.php');
+//    // Check if the user is logged in
+//    if (!getSession('user_id')) {
+//        // Redirect to the login page if not logged in
+//        header('Location: login.php');
+//        exit();
+//    }
+//
+//    // Fetch user data from the database
+//    $user = getSession('user_id');
+//    $user = getUserById($user); // Function to retrieve user data by ID from the database
+////    $user = getUserbyemail($email);
+//
+//    // Check if user data is retrieved
+//    if (!$user) {
+//        // Redirect to the login page if user data is not found
+//        header('Location: login.php');
+//        exit();
+//    }
+//
+//    // Extract user details
+//    $id = $user['id'];
+//    $username = $user['username'];
+//    $email = $user['email'];
+//    $address = $user['address'];
+//    $telephone = $user['telephone'];
+//    $password = $user['password'];
+//
+//     // Define variables to hold error messages
+//   //  $currentPasswordError = $newPasswordError = $confirmPasswordError = 'error updating password';
+//
+//    // Handle password change logic when the form is submitted
+//if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnchange'])) {
+//    // Retrieve form data
+//    $currentPassword = $_POST['current_password'];
+//    $newPassword = $_POST['new_password'];
+//    $confirmPassword = $_POST['confirm_password'];
+//
+//    // Validate current password
+//    if (!verifyPassword($currentPassword, $user['password'])) {
+//        $currentPasswordError = "Incorrect current password.";
+//    }
+//
+//    // Validate new password and confirm password
+//    if ($newPassword !== $confirmPassword) {
+//        $newPasswordError = "New password and confirm password do not match.";
+//    }
+//
+//    // If no errors, proceed to change password
+//    if (empty($currentPasswordError) && empty($newPasswordError)) {
+//        // Hash the new password
+//        $hashedNewPassword = hashPassword($newPassword);
+//
+//        // Update the user's password in the database
+//        $updateSuccess = updateUserPassword($id, $hashedNewPassword);
+//
+//        // Check if update was successful
+//        if ($updateSuccess) {
+//            // Redirect to profile page or display success message
+//            header('Location: profile.php?success=password_changed');
+//            exit();
+//        } else {
+//            // Display error message if update failed
+//            $updateError = "Failed to update password. Please try again later.";
+//        }
+//    }
+//}
+//
+
+
+// Include necessary files
+require_once('session.php');
+require_once('dbUtil.php');
+require_once('auth.php');
+
+try {
     // Fetch user data from the database
-    $userId = getSession('user_id');
-    $user = getUserById($userId); // Function to retrieve user data by ID from the database
+    $user = getSession('user_id');
+    $user = getUserById($user);
 
     // Check if user data is retrieved
     if (!$user) {
@@ -29,45 +97,50 @@
     $telephone = $user['telephone'];
     $password = $user['password'];
 
-     // Define variables to hold error messages
-   //  $currentPasswordError = $newPasswordError = $confirmPasswordError = 'error updating password';
+    // Define variables to hold error messages
+    $currentPasswordError = $newPasswordError = $confirmPasswordError = '';
 
     // Handle password change logic when the form is submitted
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnchange'])) {
-    // Retrieve form data
-    $currentPassword = $_POST['current_password'];
-    $newPassword = $_POST['new_password'];
-    $confirmPassword = $_POST['confirm_password'];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnchange'])) {
+        // Retrieve form data
+        $currentPassword = $_POST['current_password'];
+        $newPassword = $_POST['new_password'];
+        $confirmPassword = $_POST['confirm_password'];
 
-    // Validate current password
-    if (!verifyPassword($currentPassword, $user['password'])) {
-        $currentPasswordError = "Incorrect current password.";
-    }
+        // Validate current password
+        if (!verifyPassword($currentPassword, $user['password'])) {
+            $currentPasswordError = "Incorrect current password.";
+        }
 
-    // Validate new password and confirm password
-    if ($newPassword !== $confirmPassword) {
-        $newPasswordError = "New password and confirm password do not match.";
-    }
+        // Validate new password and confirm password
+        if ($newPassword !== $confirmPassword) {
+            $newPasswordError = "New password and confirm password do not match.";
+        }
 
-    // If no errors, proceed to change password
-    if (empty($currentPasswordError) && empty($newPasswordError)) {
-        // Hash the new password
-        $hashedNewPassword = hashPassword($newPassword);
+        // If no errors, proceed to change password
+        if (empty($currentPasswordError) && empty($newPasswordError)) {
+            // Hash the new password
+            $hashedNewPassword = hashPassword($newPassword);
 
-        // Update the user's password in the database
-        $updateSuccess = updateUserPassword($userId, $hashedNewPassword);
+            // Update the user's password in the database
+            $updateSuccess = updateUserPassword($id, $hashedNewPassword);
 
-        // Check if update was successful
-        if ($updateSuccess) {
-            // Redirect to profile page or display success message
-            header('Location: profile.php?success=password_changed');
-            exit();
-        } else {
-            // Display error message if update failed
-            $updateError = "Failed to update password. Please try again later.";
+            // Check if update was successful
+            if ($updateSuccess) {
+                // Redirect to profile page or display success message
+                header('Location: profile.php?success=password_changed');
+                exit();
+            } else {
+                // Display error message if update failed
+                $updateError = "Failed to update password. Please try again later.";
+            }
         }
     }
+} catch (Exception $e) {
+    // Handle any exceptions
+    $errorMessage = "An error occurred: " . $e->getMessage();
 }
+
 
 ?>
 

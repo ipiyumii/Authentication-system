@@ -109,6 +109,9 @@
       <path value="$PROJECT_DIR$/vendor/google/grpc-gcp" />
       <path value="$PROJECT_DIR$/vendor/google/cloud-storage" />
       <path value="$PROJECT_DIR$/vendor/mtdowling/jmespath.php" />
+      <path value="$PROJECT_DIR$/vendor/starkbank/ecdsa" />
+      <path value="$PROJECT_DIR$/vendor/sendgrid/sendgrid" />
+      <path value="$PROJECT_DIR$/vendor/sendgrid/php-http-client" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">

@@ -106,6 +106,10 @@ body {
     color: red;
     margin-top: 10px;
 }
+email-sent{
+    color: green;
+    margin-top: 10px;
+}
 
 .remember-forgot {
     font-size: .9em;
