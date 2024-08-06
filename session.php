@@ -10,7 +10,6 @@ function setSession($key, $value) {
 }
 
 function getSession($key) {
-    // Get session variable
     return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
 }
 
@@ -23,8 +22,8 @@ function endSession() {
     session_destroy();
 }
 
-// Check for session timeout (adjust the timeout duration as needed)
-$timeout = 60 * 30; // 30 minutes
+// Check for session timeout 
+$timeout = 60 * 30; 
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout)) {
     endSession();
 }

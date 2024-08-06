@@ -19,24 +19,20 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' &
     } else {
         $user = getUserFromDatabase($username);
 
-        // Set session variables or redirect the user to the dashboard upon successful login
         if ($user && verifyPassword($password, $user['password'])) {
             // Set session variables
             setSession('user_id', $user['id']);
             setSession('username', $user['username']);
 
-            // Reset login attempts on successful login
             setSession('login_attempts', 0);
             setSession('last_login_attempt', 0);
 
             resetLoginAttempts($username);
-            // Redirect to the dashboard page
             header('Location: dashboard.php');
             exit();
         } else {
             // Increment login attempts for account lockout mechanism
             incrementLoginAttempts($username);
-            // Check if the account should be locked
             $isAccountLocked = isAccountLocked($username);
             if ($isAccountLocked) {
                 $error = "Your account has been locked due to multiple failed login attempts. Please contact support.";
@@ -46,43 +42,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST' &
         }
     }
 
-
-
-//    if (empty($password)) {
-//            $error = "Password is required.";
-//         } else {
-//            $user = getUserFromDatabase($username);
-//
-//            // Set session variables or redirect the user to the dashboard upon successful login
-//            if ($user && verifyPassword($password, $user['password'])) {
-//                // Set session variables
-//                setSession('user_id', $user['id']);
-//                setSession('username', $user['username']);
-//
-//                // Reset login attempts on successful login
-//                setSession('login_attempts', 0);
-//                setSession('last_login_attempt', 0);
-//
-//                // Redirect to the dashboard page
-//                header('Location: dashboard.php');
-//                exit();
-//            } else {
-//            // Increment login attempts for account lockout mechanism
-//            incrementLoginAttempts($username);
-//                  // Check if the account should be locked
-//                  $isAccountLocked = isAccountLocked($username);
-//                  if ($isAccountLocked) {
-//                      $error = "Your account has been locked due to multiple failed login attempts. Please contact support.";
-//                  } else {
-//                      $error = "Invalid username or password.";
-//                  }
-//           }
-//        }
     }
-
-
 ?>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">

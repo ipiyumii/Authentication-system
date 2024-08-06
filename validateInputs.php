@@ -36,9 +36,6 @@ function validateRegistrationInput($username, $email, $password, $confirmPasswor
     echo "Username for $name: $username";
 
 
-    // Validate telephone (optional)
-        // Add validation rules based on your requirements
-
         // Validate address
         if (empty($address)) {
             $errors['address'] = "Address is required.";
@@ -49,15 +46,12 @@ function validateRegistrationInput($username, $email, $password, $confirmPasswor
 
     function generateUsername($name): array|string|null
     {
-        // Convert name to lowercase
         $name = strtolower($name);
 
-        // Remove spaces and special characters
         $username = preg_replace('/^[a-zA-Z0-9_]+$/', '', $name);
 
         // Ensure the username is not empty
         if(empty($username)) {
-            // If the username is empty, generate a default one
             $username = 'user' . uniqid();
         }
 

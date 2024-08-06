@@ -1,32 +1,25 @@
 <?php
 
-// Include the Google API client library
 require_once('session.php');
 require_once 'vendor/autoload.php';
 require_once('dbUtil.php');
 require_once ('validateInputs.php');
 
-// Initialize the Google client
 $client = new Google_Client();
-$client->setAuthConfig(__DIR__ .'/client_secret_601545463122-q61e84etavrj2stgh6erhfq2mvl2gf48.apps.googleusercontent.com.json'); // Path to your client secret JSON file
-$client->setRedirectUri('http://localhost/auth_system/callback.php'); // Your callback URL
+$client->setAuthConfig(__DIR__ .'/client_secret_601545463122-q61e84etavrj2stgh6erhfq2mvl2gf48.apps.googleusercontent.com.json'); 
+$client->setRedirectUri('http://localhost/auth_system/callback.php'); 
 $client->addScope('email');
 $client->addScope('profile');
 
-// Handle the OAuth callback
 if (isset($_GET['code'])) {
     try {
-        // Exchange authorization code for access token
         $accessToken = $client->fetchAccessTokenWithAuthCode($_GET['code']);
-        // Set access token to the client
         $client->setAccessToken($accessToken);
 
-        // Get user info
         $oauth2 = new Google_Service_Oauth2($client);
         $userInfo = $oauth2->userinfo->get();
 
         if($userInfo){
-            // Extract user information into separate variables
            $email = $userInfo->email;
            $google_id = $userInfo->id;
            $givenName = $userInfo->givenName;
@@ -69,7 +62,6 @@ if (isset($_GET['code'])) {
             echo "Failed to retrieve user information.";
             exit();
         }
-        // You can redirect the user or perform further actions here
     } catch (Google_Service_Exception $e) {
         error_log('Google Service Error: ' . $e->getMessage());
         echo 'An error occurred while processing your request. Please try again later.';

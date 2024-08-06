@@ -2,9 +2,10 @@
 node_modules
 node_modules
 
+client_secret_601545463122-q61e84etavrj2stgh6erhfq2mvl2gf48.apps.googleusercontent.com.json
+client_secret_601545463122-q61e84etavrj2stgh6erhfq2mvl2gf48.apps.googleusercontent.com.json
+
+.env
 *.json
-*.php
-client_secret_*.json
-*.env
 *.key
 *.pem
